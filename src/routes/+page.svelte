@@ -88,9 +88,18 @@
     {/each}
   </select>
 
-  <button type="submit">Download CSV</button>
+  <button class="block mt-2 p-2 text-white font-bold bg-blue-500 rounded" type="submit">Download CSV</button>
 </form>
 
-<p class="whitespace-pre">
-  {JSON.stringify(filters, null, 2)}
-</p>
+<style>
+  form {
+    margin-top: 1rem;
+    max-inline-size: 75ch;
+    margin-left: auto;
+    margin-right: auto;
+
+    select {
+      border-radius: 0.25rem;
+    }
+  }
+</style>
