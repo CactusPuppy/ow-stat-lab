@@ -53,7 +53,7 @@
   });
 </script>
 
-<form method="POST">
+<form method="POST" action="?/download">
   <select bind:value={filters.role} name="role">
     <option value="All">All Roles</option>
     {#each Object.values(Role) as role}

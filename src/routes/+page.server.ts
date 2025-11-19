@@ -4,7 +4,7 @@ import type { Actions } from "./$types";
 const BlizzardStatsURL = new URL("https://overwatch.blizzard.com/en-us/rates/data/");
 
 export const actions: Actions = {
-  default: async ({ request }) => {
+  download: async ({ request }) => {
     const formData = await request.formData();
     const filters = {
       role: formData.get("role"),
