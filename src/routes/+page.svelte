@@ -39,6 +39,8 @@
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+      // @ts-expect-error Type narrowing prevents form.data from being undefined
+      form.data = undefined; // Clear data after download
     }
 
     if (form?.filters) {
@@ -53,7 +55,7 @@
   });
 </script>
 
-<form method="POST" action="?/download">
+<form method="POST">
   <select bind:value={filters.role} name="role">
     <option value="All">All Roles</option>
     {#each Object.values(Role) as role}
@@ -99,7 +101,7 @@
     {/each}
   </select>
 
-  <button class="block mt-2 p-2 text-white font-bold bg-blue-500 rounded" type="submit">Download CSV</button>
+  <button formaction="?/download" class="block mt-2 p-2 text-white font-bold bg-blue-500 rounded" type="submit">Download CSV</button>
 </form>
 
 <style>
