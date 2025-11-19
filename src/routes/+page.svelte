@@ -4,6 +4,7 @@
   import type { PageProps } from "./$types";
   import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
   import { untrack } from "svelte";
+  import { enhance } from "$app/forms";
 
   let filters = $state<FilterData>({
     role: "All",
@@ -55,7 +56,7 @@
   });
 </script>
 
-<form method="POST">
+<form method="POST" use:enhance>
   <select bind:value={filters.role} name="role">
     <option value="All">All Roles</option>
     {#each Object.values(Role) as role}
