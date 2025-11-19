@@ -1,4 +1,4 @@
-import { MapGameMode, type Map } from "./types";
+import { MapGameMode, type Map } from "./types.d";
 
 export const Maps: Map[] = [
   { name: "Hanaoka", gameMode: MapGameMode.Clash },
