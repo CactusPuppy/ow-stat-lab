@@ -50,7 +50,7 @@ export enum Region {
 export interface FilterData {
   role: Role | "All",
   input: Input,
-  rq: GameMode,
+  rq: string,
   tier: CompetitiveTier | "All",
   map: Map | "All",
   region: Region,

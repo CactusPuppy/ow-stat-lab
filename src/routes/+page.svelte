@@ -3,11 +3,12 @@
   import { Maps } from "$lib/overwatch/maps";
   import type { PageProps } from "./$types";
   import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
+  import { untrack } from "svelte";
 
-  const filters = $state<FilterData>({
+  let filters = $state<FilterData>({
     role: "All",
     input: Input["Mouse & Keyboard"],
-    rq: GameMode["Quick Play - Role Queue"],
+    rq: GameMode["Quick Play - Role Queue"].toString(10),
     tier: "All",
     map: "All",
     region: Region.Americas,
@@ -39,6 +40,16 @@
       a.click();
       window.URL.revokeObjectURL(url);
     }
+
+    if (form?.filters) {
+      untrack(() => {
+        console.log("Updating filters from form:", JSON.stringify(form.filters, null, 2));
+        filters = {
+          ...filters,
+          ...Object.fromEntries(Object.entries(form.filters).filter(([_, v]) => !!v)),
+        };
+      });
+    }
   });
 </script>
 
@@ -58,11 +69,11 @@
 
   <select name="game-mode" id="game-mode" bind:value={filters.rq}>
     {#each Object.keys(GameMode).filter(key => Number.isNaN((Number.parseInt(key)))) as key}
-      <option value={GameMode[key as keyof typeof GameMode]}>{key}</option>
+      <option value={GameMode[key as keyof typeof GameMode].toString(10)}>{key}</option>
     {/each}
   </select>
 
-  {#if filters.rq === GameMode["Competitive - Role Queue"]}
+  {#if filters.rq === GameMode["Competitive - Role Queue"].toString(10)}
     <select name="tier" id="tier" bind:value={filters.tier}>
       <option value="All">All Tiers</option>
       {#each Object.keys(CompetitiveTier) as key}
