@@ -1,49 +1,26 @@
-import type { OverwatchStatsResponse } from "$lib/overwatch/types";
+import { fetchOverwatchStats, filtersFromRequest } from "$lib/overwatch/statsAPI";
+import type { FilterData, OverwatchStatsResponse } from "$lib/overwatch/types";
 import type { Actions } from "./$types";
 
 const BlizzardStatsURL = new URL("https://overwatch.blizzard.com/en-us/rates/data/");
 
 export const actions: Actions = {
   download: async ({ request }) => {
-    const formData = await request.formData();
-    const filters = {
-      role: formData.get("role"),
-      input: formData.get("input"),
-      rq: formData.get("game-mode"),
-      tier: formData.get("tier"),
-      map: formData.get("map"),
-      region: formData.get("region"),
-    };
-    console.log("Filters:", filters);
+    const filters = await filtersFromRequest(request);
 
-    const queryParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== null && value !== undefined && value !== '') {
-        queryParams.append(key, String(value));
-      }
+    try {
+      const statsJSON = await fetchOverwatchStats(filters);
+
+      const finalJSON = statsJSON.rates.map(entry => ({
+        name: entry.cells.name,
+        pickrate: entry.cells.pickrate,
+        winrate: entry.cells.winrate,
+        role: entry.hero.role,
+      }));
+
+      return { success: true, data: finalJSON, filters };
+    } catch (error) {
+      return { success: false, error: (error as Error).message, filters };
     }
-    console.log("Query Params:", queryParams.toString());
-
-    const urlWithParams = new URL(BlizzardStatsURL.toString());
-    urlWithParams.search = queryParams.toString();
-    console.log("Final URL:", urlWithParams.toString());
-
-    const blizzResponse = await fetch(urlWithParams.toString(), { method: "GET" });
-    if (!blizzResponse.ok) {
-      console.error("Failed to fetch data from Blizzard:", blizzResponse.statusText);
-      return { success: false, error: `Blizzard Status ${blizzResponse.status}`, filters };
-    }
-
-    const statsJSON = await blizzResponse.json() as OverwatchStatsResponse;
-    console.log("Received data:", statsJSON);
-
-    const finalJSON = statsJSON.rates.map(entry => ({
-      name: entry.cells.name,
-      pickrate: entry.cells.pickrate,
-      winrate: entry.cells.winrate,
-      role: entry.hero.role,
-    }));
-
-    return { success: true, data: finalJSON, filters };
   },
 };
