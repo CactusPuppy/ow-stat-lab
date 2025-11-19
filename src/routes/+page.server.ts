@@ -31,7 +31,7 @@ export const actions: Actions = {
     const blizzResponse = await fetch(urlWithParams.toString(), { method: "GET" });
     if (!blizzResponse.ok) {
       console.error("Failed to fetch data from Blizzard:", blizzResponse.statusText);
-      return { success: false, filters };
+      return { success: false, error: `Blizzard Status ${blizzResponse.status}`, filters };
     }
 
     const statsJSON = await blizzResponse.json() as OverwatchStatsResponse;

@@ -101,6 +101,13 @@
     {/each}
   </select>
 
+  {#if form?.error}
+    <div class="rounded outline-red-600 outline-2 bg-red-800 text-white mt-2 p-2">
+      <p class="font-bold">Error:</p>
+      <p>{form.error}</p>
+    </div>
+  {/if}
+
   <button formaction="?/download" class="block mt-2 p-2 text-white font-bold bg-blue-500 rounded" type="submit">Download CSV</button>
 </form>
 
