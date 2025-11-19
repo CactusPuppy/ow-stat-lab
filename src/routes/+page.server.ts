@@ -6,9 +6,8 @@ const BlizzardStatsURL = new URL("https://overwatch.blizzard.com/en-us/rates/dat
 
 export const actions: Actions = {
   download: async ({ request }) => {
-    const filters = await filtersFromRequest(request);
-
     try {
+      const filters = await filtersFromRequest(request);
       const statsJSON = await fetchOverwatchStats(filters);
 
       const finalJSON = statsJSON.rates.map(entry => ({

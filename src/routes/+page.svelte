@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Role, Input, GameMode, type MapGameMode, Region, type Map, CompetitiveTier, type FilterData } from "$lib/overwatch/types.d";
   import { Maps } from "$lib/overwatch/maps";
-  import type { PageProps } from "./$types";
+  import type { PageProps, SubmitFunction } from "./$types";
   import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
   import { untrack } from "svelte";
   import { enhance } from "$app/forms";
@@ -43,20 +43,22 @@
       // @ts-expect-error Type narrowing prevents form.data from being undefined
       form.data = undefined; // Clear data after download
     }
-
-    if (form?.filters) {
-      untrack(() => {
-        console.log("Updating filters from form:", JSON.stringify(form.filters, null, 2));
-        filters = {
-          ...filters,
-          ...Object.fromEntries(Object.entries(form.filters).filter(([_, v]) => !!v)),
-        };
-      });
-    }
   });
+
+  const handleSubmit: SubmitFunction = ({ action, cancel }) => {
+    const actionName = action.search.substring("?/".length);
+    if (actionName === "download" && filters.region === "All") {
+      alert("Specify a region's data to download.");
+      cancel();
+    }
+
+    return async ({ result, update }) => {
+      update({ reset: false });
+    }
+  }
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" use:enhance={handleSubmit}>
   <select bind:value={filters.role} name="role">
     <option value="All">All Roles</option>
     {#each Object.values(Role) as role}
